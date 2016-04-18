@@ -3,6 +3,7 @@ package regression
 import java.io.File
 
 import breeze.linalg._
+import breeze.numerics.abs
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FunSuite}
@@ -28,20 +29,30 @@ class LinearModelTest extends FunSuite with BeforeAndAfter{
     val theta: DenseVector[Double] = DenseVector.zeros(2)
 
 
-    val cost = model.cost(X.t, y, theta)
+    val cost = model.cost(X.t, y, theta, 0.0)
     assert(Math.abs(cost - 32.07) <= 1.0e-2)
   }
 
-  test("Gradient descent test") {
-    val x: DenseMatrix[Double] = DenseMatrix((3.0, 1.0), (-1.0, -2.0))
-    val y: DenseVector[Double] = DenseVector(5.4, 2.3)
+  test("Gradient descent test (with and without regularization)") {
+    val X: DenseMatrix[Double] = DenseMatrix((3.0, 1.0), (-1.0, -2.0), (6.3, 5.2))
+    val y: DenseVector[Double] = DenseVector(5.4, 2.3, 4.5)
     val theta: DenseVector[Double] = DenseVector.ones[Double](2)
     val alpha: Double = 0.01
 
-    val (newTheta, history) = model.gradientDescent(x, y, theta, alpha, 1)
+    // verify normal fitting
+    val (thetaNoReg, histNoReg) = model.gradientDescent(X, y, theta, alpha, 5000)
+    val diffNoReg = abs(X * thetaNoReg - y)
 
-    val diff = newTheta - DenseVector(0.99, 0.97)
-    diff.foreach(el => assert(el <= 1.0e-2))
+    diffNoReg.foreach(el => assert(el <= 2.5e-1))
+
+    // fitting with regularization term
+    val (thetaReg, histReg) = model.gradientDescent(X, y, theta, alpha, 5000, 1)
+    val diffReg = abs(X * thetaNoReg - y)
+
+    diffReg.foreach(el => assert(el <= 2.5e-1))
+
+    // underfitting with big lambda
+
   }
 
 

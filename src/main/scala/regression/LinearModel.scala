@@ -11,7 +11,8 @@ class LinearModel{
                       y: DenseVector[Double],
                       theta: DenseVector[Double],
                       alpha: Double,
-                      num_iters: Int): (DenseVector[Double], DenseVector[Double])= {
+                      num_iters: Int,
+                      lambda: Double = 0.0): (DenseVector[Double], DenseVector[Double])= {
     val m: Int = y.length
     val history: DenseVector[Double] = DenseVector.zeros(num_iters)
 
@@ -22,9 +23,9 @@ class LinearModel{
 
       case 0 => (theta, history)
       case _ => {
-        val updatedCost = alpha * (1.0/m) * (((X * theta) - y).t * X).t;
-        val updatedTheta = theta - updatedCost
-        history(remaining-1) = cost(X, y, updatedTheta);
+        val updatedCost = (alpha / m) * (((X * theta) - y).t * X).t;
+        val updatedTheta = theta * (1 - (alpha * lambda) / m) - updatedCost
+        history(remaining-1) = cost(X, y, updatedTheta, lambda);
         descend(updatedTheta, history, remaining - 1)
       }
     }
@@ -32,9 +33,13 @@ class LinearModel{
     descend(theta, history, num_iters)
   }
 
-  def cost(X: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double]): Double = {
+  def cost(X: DenseMatrix[Double],
+           y: DenseVector[Double],
+           theta: DenseVector[Double],
+           lambda: Double): Double = {
     val m: Int = y.length
-    sum((X * theta - y) :^ 2d) / (2 * m)
+    val regularizationTerm = lambda * sum(theta :^ 2d)
+    sum((X * theta - y) :^ 2d) / (2 * m) + regularizationTerm
   }
 
 }
