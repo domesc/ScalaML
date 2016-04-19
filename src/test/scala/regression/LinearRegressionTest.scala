@@ -43,19 +43,27 @@ class LinearRegressionTest extends FunSuite
 
     // verify normal fitting
     val (thetaNoReg, histNoReg) = model.fit(alpha, 5000)
-    val diffNoReg = abs(X * thetaNoReg - y)
+    val diffNoReg = abs(model.predict(X, thetaNoReg) - y)
 
     // check convergence and distance from target value
     histNoReg(0) shouldBe < (histNoReg(-1))
-    diffNoReg.foreach(el => assert(el <= 2.5e-1))
+    all(diffNoReg.toArray) shouldBe <= (2.5e-1)
 
     // fitting with regularization term
-    val (thetaReg, histReg) = model.fit(alpha, 5000, 1)
-    val diffReg = abs(X * thetaNoReg - y)
+    val (thetaReg, histReg) = model.fit(alpha, 5000, 1e-5)
+    val diffReg = abs(model.predict(X, thetaReg) - y)
 
     // check convergence and distance from target value
     histReg(0) shouldBe < (histReg(-1))
-    diffReg.foreach(el => assert(el <= 2.5e-1))
+    all(diffReg.toArray) shouldBe <= (2.5e-1)
+
+    // fitting with regularization term
+    val (thetaRegUF, histRegUF) = model.fit(alpha, 5000, 10)
+    val diffRegUF = abs(model.predict(X, thetaRegUF) - y)
+
+    // check convergence and distance from target value (underfitting)
+    histRegUF(0) shouldBe < (histRegUF(-1))
+    atLeast(2, diffRegUF.toArray) shouldBe > (2.0)
   }
 
 
