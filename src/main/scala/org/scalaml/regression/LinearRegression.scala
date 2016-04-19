@@ -1,4 +1,4 @@
-package regression
+package org.scalaml.regression
 
 import breeze.linalg._
 
