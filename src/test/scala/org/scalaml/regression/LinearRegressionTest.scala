@@ -29,7 +29,7 @@ class LinearRegressionTest extends FunSuite
     val m: Int = y.length
     val X: DenseMatrix[Double] = DenseMatrix(DenseVector.ones[Double](m), data(::, 0))
     val theta: DenseVector[Double] = DenseVector.zeros(2)
-    val model: LinearRegression =  new LinearRegression(X, y)
+    val model: LinearRegression =  new LinearRegression()
 
     val cost = model.cost(X.t, y, theta, 0.0)
     assert(Math.abs(cost - 32.07) <= 1.0e-2)
@@ -39,30 +39,30 @@ class LinearRegressionTest extends FunSuite
     val X: DenseMatrix[Double] = DenseMatrix((3.0, 1.0), (-1.0, -2.0), (6.3, 5.2))
     val y: DenseVector[Double] = DenseVector(5.4, 2.3, 4.5)
     val alpha: Double = 0.01
-    val model: LinearRegression =  new LinearRegression(X, y)
+    val model: LinearRegression =  new LinearRegression()
 
     // verify normal fitting
-    val (thetaNoReg, histNoReg) = model.fit(alpha, 5000)
-    val diffNoReg = abs(model.predict(X, thetaNoReg) - y)
+    model.fit(X, y)
+    val diffNoReg = abs(model.predict(X) - y)
 
     // check convergence and distance from target value
-    histNoReg(0) shouldBe < (histNoReg(-1))
+    model.costHistory(0) shouldBe < (model.costHistory(-1))
     all(diffNoReg.toArray) shouldBe <= (2.5e-1)
 
     // fitting with regularization term
-    val (thetaReg, histReg) = model.fit(alpha, 5000, 1e-5)
-    val diffReg = abs(model.predict(X, thetaReg) - y)
+    model.fit(X, y, lambda = 1e-5)
+    val diffReg = abs(model.predict(X) - y)
 
     // check convergence and distance from target value
-    histReg(0) shouldBe < (histReg(-1))
+    model.costHistory(0) shouldBe < (model.costHistory(-1))
     all(diffReg.toArray) shouldBe <= (2.5e-1)
 
     // fitting with regularization term
-    val (thetaRegUF, histRegUF) = model.fit(alpha, 5000, 10)
-    val diffRegUF = abs(model.predict(X, thetaRegUF) - y)
+    model.fit(X, y, lambda = 10)
+    val diffRegUF = abs(model.predict(X) - y)
 
     // check convergence and distance from target value (underfitting)
-    histRegUF(0) shouldBe < (histRegUF(-1))
+    model.costHistory(0) shouldBe < (model.costHistory(-1))
     atLeast(2, diffRegUF.toArray) shouldBe > (2.0)
   }
 
