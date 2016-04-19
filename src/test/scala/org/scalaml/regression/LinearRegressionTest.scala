@@ -16,30 +16,24 @@ class LinearRegressionTest extends FunSuite
   with Matchers
   with BeforeAndAfter{
 
-  var data: DenseMatrix[Double] = _
-
-
-  before {
-    val resourcesPath = System.getProperty("user.dir") + "/src/test/resources"
-    data = csvread(new File(resourcesPath + "/data/test1.csv"))
-  }
-
   test("Compute cost test") {
+    val resourcesPath = System.getProperty("user.dir") + "/src/test/resources"
+    val data = csvread(new File(resourcesPath + "/data/test1.csv"))
     val y: DenseVector[Double] = data(::, 1)
-    val m: Int = y.length
-    val X: DenseMatrix[Double] = DenseMatrix(DenseVector.ones[Double](m), data(::, 0))
+    val m = y.length
+    val X = DenseMatrix(DenseVector.ones[Double](m), data(::, 0))
     val theta: DenseVector[Double] = DenseVector.zeros(2)
-    val model: LinearRegression =  new LinearRegression()
+    val model =  new LinearRegression()
 
     val cost = model.cost(X.t, y, theta, 0.0)
     assert(Math.abs(cost - 32.07) <= 1.0e-2)
   }
 
   test("Gradient descent test (with and without regularization)") {
-    val X: DenseMatrix[Double] = DenseMatrix((3.0, 1.0), (-1.0, -2.0), (6.3, 5.2))
-    val y: DenseVector[Double] = DenseVector(5.4, 2.3, 4.5)
-    val alpha: Double = 0.01
-    val model: LinearRegression =  new LinearRegression()
+    val X = DenseMatrix((3.0, 1.0), (-1.0, -2.0), (6.3, 5.2))
+    val y = DenseVector(5.4, 2.3, 4.5)
+    val alpha = 0.01
+    val model =  new LinearRegression()
 
     // verify normal fitting
     model.fit(X, y)

@@ -3,10 +3,11 @@ package org.scalaml.regression
 import breeze.linalg._
 
 /**
+  * Implementation of linear regression algorithm
   *
   * Created by domesc on 03/04/16.
   */
-class LinearRegression extends BaseModel{
+class LinearRegression extends GradientDescent with BaseModel{
 
   override def fit(X: DenseMatrix[Double],
                    y: DenseVector[Double],
