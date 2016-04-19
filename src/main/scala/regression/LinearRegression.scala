@@ -3,28 +3,27 @@ package regression
 import breeze.linalg._
 
 /**
- * Created by domesc on 03/04/16.
- */
-class LinearModel{
+  * @param X features
+  * @param y labels
+  *
+  * Created by domesc on 03/04/16.
+  */
+class LinearRegression(X: DenseMatrix[Double],
+                       y: DenseVector[Double]) extends BaseModel{
 
   /**
     * Gradient descent algorithm
-    * @param X features
-    * @param y labels
-    * @param theta coefficients
     * @param alpha learning rate
     * @param num_iters number of iterations
     * @param lambda regularization parameter
-    * @return cost
+    * @return coefficients, costHistory
     */
-  def gradientDescent(X: DenseMatrix[Double],
-                      y: DenseVector[Double],
-                      theta: DenseVector[Double],
-                      alpha: Double,
-                      num_iters: Int,
-                      lambda: Double = 0.0): (DenseVector[Double], DenseVector[Double])= {
+  override def fit(alpha: Double,
+                   num_iters: Int,
+                   lambda: Double = 0.0): (DenseVector[Double], DenseVector[Double]) = {
     val m: Int = y.length
-    val history: DenseVector[Double] = DenseVector.zeros(num_iters)
+    val costHistory: DenseVector[Double] = DenseVector.zeros(num_iters)
+    val theta = DenseVector.ones[Double](X.cols)
 
     @annotation.tailrec
     def descend(theta: DenseVector[Double],
@@ -34,13 +33,14 @@ class LinearModel{
       case 0 => (theta, history)
       case _ => {
         val updatedCost = (alpha / m) * (((X * theta) - y).t * X).t;
-        val updatedTheta = theta * (1 - (alpha * lambda) / m) - updatedCost
+        val regularizationTerm = (1 - (alpha * lambda) / m)
+        val updatedTheta = theta * regularizationTerm - updatedCost
         history(remaining-1) = cost(X, y, updatedTheta, lambda);
         descend(updatedTheta, history, remaining - 1)
       }
     }
 
-    descend(theta, history, num_iters)
+    descend(theta, costHistory, num_iters)
   }
 
   /**
@@ -59,5 +59,4 @@ class LinearModel{
     val regularizationTerm = lambda * sum(theta :^ 2d)
     sum((X * theta - y) :^ 2d) / (2 * m) + regularizationTerm
   }
-
 }
