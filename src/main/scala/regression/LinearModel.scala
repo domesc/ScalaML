@@ -7,6 +7,16 @@ import breeze.linalg._
  */
 class LinearModel{
 
+  /**
+    * Gradient descent algorithm
+    * @param X features
+    * @param y labels
+    * @param theta coefficients
+    * @param alpha learning rate
+    * @param num_iters number of iterations
+    * @param lambda regularization parameter
+    * @return cost
+    */
   def gradientDescent(X: DenseMatrix[Double],
                       y: DenseVector[Double],
                       theta: DenseVector[Double],
@@ -33,6 +43,14 @@ class LinearModel{
     descend(theta, history, num_iters)
   }
 
+  /**
+    * Cost function for linear regression model
+    * @param X features
+    * @param y labels
+    * @param theta coefficients
+    * @param lambda regularization parameter
+    * @return cost
+    */
   def cost(X: DenseMatrix[Double],
            y: DenseVector[Double],
            theta: DenseVector[Double],
