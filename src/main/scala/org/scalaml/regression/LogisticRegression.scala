@@ -1,6 +1,6 @@
 package org.scalaml.regression
 
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.{DenseMatrix, DenseVector, sum}
 import breeze.numerics.{log, sigmoid}
 
 /**
@@ -33,8 +33,10 @@ class LogisticRegression extends BaseModel with GradientDescent{
                               lambda: Double): Double = {
     val m: Int = y.length
     val h_theta = sigmoid(X * theta)
+    val regularizationTerm = (lambda / (2 * m)) * sum(theta(1 to -1) :^ 2d)
+    val cost = (1.0 / m) * (-(y.t) * log(h_theta) - y.mapValues(1 - _).t * log(h_theta.mapValues(1 - _)))
 
-    (1.0 / m) * (-(y.t) * log(h_theta) - y.mapValues(1 - _).t * log(h_theta.mapValues(1 - _)))
+    cost + regularizationTerm
   }
 }
 
