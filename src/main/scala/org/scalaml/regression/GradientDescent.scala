@@ -5,7 +5,7 @@ import breeze.linalg.{DenseMatrix, DenseVector}
 /**
   * Created by domesc on 19/04/16.
   */
-abstract class GradientDescent {
+trait GradientDescent {
   /**
     * Batch gradient descent algorithm
     *

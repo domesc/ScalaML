@@ -32,5 +32,4 @@ trait BaseModel {
     * @return the predicted labels
     */
   def predict(X: DenseMatrix[Double]): DenseVector[Double] = X * coefficients
-
 }

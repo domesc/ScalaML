@@ -7,8 +7,11 @@ import breeze.linalg._
   *
   * Created by domesc on 03/04/16.
   */
-class LinearRegression extends GradientDescent with BaseModel{
+class LinearRegression extends BaseModel with GradientDescent{
 
+  /**
+    * @inheritdoc
+    */
   override def fit(X: DenseMatrix[Double],
                    y: DenseVector[Double],
                    alpha: Double = 0.01,
@@ -22,6 +25,9 @@ class LinearRegression extends GradientDescent with BaseModel{
     costHistory = history
   }
 
+  /**
+    * @inheritdoc
+    */
   override def cost(X: DenseMatrix[Double],
                      y: DenseVector[Double],
                      theta: DenseVector[Double],
