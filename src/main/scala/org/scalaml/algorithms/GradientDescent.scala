@@ -1,4 +1,4 @@
-package org.scalaml.regression
+package org.scalaml.algorithms
 
 import breeze.linalg.{DenseMatrix, DenseVector}
 

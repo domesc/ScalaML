@@ -44,7 +44,7 @@ class LinearRegressionTest extends FunSuite
     all(diffNoReg.toArray) shouldBe <= (2.5e-1)
 
     // fitting with regularization term
-    model.fit(X, y, lambda = 1e-5)
+    model.setRegParam(1e-5).fit(X, y)
     val diffReg = abs(model.predict(X) - y)
 
     // check convergence and distance from target value
@@ -52,15 +52,11 @@ class LinearRegressionTest extends FunSuite
     all(diffReg.toArray) shouldBe <= (2.5e-1)
 
     // fitting with regularization term
-    model.fit(X, y, lambda = 10)
+    model.setRegParam(10).fit(X, y)
     val diffRegUF = abs(model.predict(X) - y)
 
     // check convergence and distance from target value (underfitting)
     model.costHistory(0) shouldBe < (model.costHistory(-1))
     atLeast(2, diffRegUF.toArray) shouldBe > (2.0)
   }
-
-
-
-
 }
