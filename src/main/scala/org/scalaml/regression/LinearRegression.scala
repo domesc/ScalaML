@@ -66,4 +66,12 @@ class LinearRegression
     val regularizationTerm = lambda * sum(theta :^ 2d)
     sum((X * theta - y) :^ 2d) / (2 * m) + regularizationTerm
   }
+
+  /**
+    * Predict the new labels based on the fitted model
+    *
+    * @param X the features
+    * @return the predicted labels
+    */
+  override def predict(X: DenseMatrix[Double]): DenseVector[Double] =  X * coefficients
 }

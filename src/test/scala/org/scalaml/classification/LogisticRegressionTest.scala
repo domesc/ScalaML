@@ -1,4 +1,4 @@
-package org.scalaml.regression
+package org.scalaml.classification
 
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
