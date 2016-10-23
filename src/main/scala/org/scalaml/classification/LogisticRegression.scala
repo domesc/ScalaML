@@ -6,52 +6,54 @@ import org.scalaml.BaseModel
 import org.scalaml.algorithms.GradientDescent
 
 /**
-  * Created by domesc on 19/04/16.
-  */
+ * Created by domesc on 19/04/16.
+ */
 class LogisticRegression
-  extends BaseModel with GradientDescent {
+    extends BaseModel with GradientDescent {
   var alpha: Double = 0.01
   var maxIters: Int = 5000
   var lambda: Double = 0.0
-  var threshold:Double = 0.5
+  var threshold: Double = 0.5
 
   /**
-    * @param value the learning rate
-    */
+   * @param value the learning rate
+   */
   def setLearningRate(value: Double): this.type = {
     alpha = value
     this
   }
 
   /**
-    * @param value the number of iterations
-    */
+   * @param value the number of iterations
+   */
   def setMaxIterations(value: Int): this.type = {
     maxIters = value
     this
   }
 
   /**
-    * @param value the regularization parameter. It is used in order to avoid overfitting
-    */
+   * @param value the regularization parameter. It is used in order to avoid overfitting
+   */
   def setRegParam(value: Double): this.type = {
     lambda = value
     this
   }
 
   /**
-    * @param value the threshold used to predict the class
-    */
+   * @param value the threshold used to predict the class
+   */
   def setThreshold(value: Double): this.type = {
     threshold = value
     this
   }
 
   /**
-    * @inheritdoc
-    */
-  override def fit(X: DenseMatrix[Double],
-                   y: DenseVector[Double]): Unit = {
+   * @inheritdoc
+   */
+  override def fit(
+    X: DenseMatrix[Double],
+    y: DenseVector[Double]
+  ): Unit = {
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
     val thetaInit = DenseVector.ones[Double](X.cols)
 
@@ -61,12 +63,14 @@ class LogisticRegression
   }
 
   /**
-    * @inheritdoc
-    */
-  override def cost(X: DenseMatrix[Double],
-                    y: DenseVector[Double],
-                    theta: DenseVector[Double],
-                    lambda: Double): Double = {
+   * @inheritdoc
+   */
+  override def cost(
+    X: DenseMatrix[Double],
+    y: DenseVector[Double],
+    theta: DenseVector[Double],
+    lambda: Double
+  ): Double = {
     val m: Int = y.length
     val h_theta = sigmoid(X * theta)
     val regularizationTerm = (lambda / (2 * m)) * sum(theta(1 to -1) :^ 2d)
@@ -76,12 +80,12 @@ class LogisticRegression
   }
 
   /**
-    * Predict the new labels based on the fitted model
-    * Binary classification supported.
-    *
-    * @param X the features
-    * @return the predicted labels
-    */
+   * Predict the new labels based on the fitted model
+   * Binary classification supported.
+   *
+   * @param X the features
+   * @return the predicted labels
+   */
   override def predict(X: DenseMatrix[Double]): DenseVector[Double] = {
     val probabilities: DenseVector[Double] = sigmoid(X * coefficients)
     val classes = probabilities.map(el => el match {
