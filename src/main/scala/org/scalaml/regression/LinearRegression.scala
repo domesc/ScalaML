@@ -23,23 +23,23 @@ case class LinearRegression(
    * @inheritdoc
    */
   override def fit(
-    features: DenseMatrix[Double],
-    labels: DenseVector[Double]
+    X: DenseMatrix[Double],
+    y: DenseVector[Double]
   ): Unit = {
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
-    val thetaInit = DenseVector.ones[Double](features.cols)
+    val weightsInit = DenseVector.ones[Double](X.cols)
 
-    val (theta, history) = descend(
-      features,
-      labels,
-      thetaInit,
+    val (weights, history) = descend(
+      X,
+      y,
+      weightsInit,
       (a, b) => a * b,
       learningRate,
       regParam,
       costHistoryInit,
       maxIters
     )
-    coefficients = theta
+    coefficients = weights
     costHistory = history
   }
 
@@ -49,12 +49,12 @@ case class LinearRegression(
   override def cost(
     X: DenseMatrix[Double],
     y: DenseVector[Double],
-    theta: DenseVector[Double],
+    weights: DenseVector[Double],
     regParam: Double
   ): Double = {
     val m: Int = y.length
-    val regularizationTerm = regParam * sum(theta :^ 2d)
-    sum((X * theta - y) :^ 2d) / (2 * m) + regularizationTerm
+    val regularizationTerm = regParam * sum(weights :^ 2d)
+    sum((X * weights - y) :^ 2d) / (2 * m) + regularizationTerm
   }
 
   /**
