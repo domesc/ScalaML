@@ -8,38 +8,16 @@ import org.scalaml.algorithms.GradientDescent
  * Implementation of linear regression algorithm
  *
  * Created by domesc on 03/04/16.
+ * @param learningRate the learning rate
+ * @param maxIters the number of iterations
+ * @param regParam the regularization parameter. It is used in order to avoid overfitting
  */
 
-class LinearRegression
-    extends BaseModel with GradientDescent {
-
-  var alpha: Double = 0.01
-  var maxIters: Int = 5000
-  var lambda: Double = 0.0
-
-  /**
-   * @param value the learning rate
-   */
-  def setLearningRate(value: Double): this.type = {
-    alpha = value
-    this
-  }
-
-  /**
-   * @param value the number of iterations
-   */
-  def setMaxIterations(value: Int): this.type = {
-    maxIters = value
-    this
-  }
-
-  /**
-   * @param value the regularization parameter. It is used in order to avoid overfitting
-   */
-  def setRegParam(value: Double): this.type = {
-    lambda = value
-    this
-  }
+case class LinearRegression(
+    learningRate: Double = 0.01,
+    maxIters: Int = 5000,
+    regParam: Double = 0.0
+) extends BaseModel with GradientDescent {
 
   /**
    * @inheritdoc
@@ -51,7 +29,16 @@ class LinearRegression
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
     val thetaInit = DenseVector.ones[Double](features.cols)
 
-    val (theta, history) = descend(features, labels, thetaInit, (a, b) => a * b, alpha, lambda, costHistoryInit, maxIters)
+    val (theta, history) = descend(
+      features,
+      labels,
+      thetaInit,
+      (a, b) => a * b,
+      learningRate,
+      regParam,
+      costHistoryInit,
+      maxIters
+    )
     coefficients = theta
     costHistory = history
   }
@@ -63,10 +50,10 @@ class LinearRegression
     X: DenseMatrix[Double],
     y: DenseVector[Double],
     theta: DenseVector[Double],
-    lambda: Double
+    regParam: Double
   ): Double = {
     val m: Int = y.length
-    val regularizationTerm = lambda * sum(theta :^ 2d)
+    val regularizationTerm = regParam * sum(theta :^ 2d)
     sum((X * theta - y) :^ 2d) / (2 * m) + regularizationTerm
   }
 

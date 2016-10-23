@@ -7,45 +7,17 @@ import org.scalaml.algorithms.GradientDescent
 
 /**
  * Created by domesc on 19/04/16.
+ * @param alpha the learning rate
+ * @param maxIters the number of iterations
+ * @param lambda the regularization parameter. It is used in order to avoid overfitting
+ * @param threshold the threshold used to predict the class
  */
-class LogisticRegression
-    extends BaseModel with GradientDescent {
-  var alpha: Double = 0.01
-  var maxIters: Int = 5000
-  var lambda: Double = 0.0
-  var threshold: Double = 0.5
-
-  /**
-   * @param value the learning rate
-   */
-  def setLearningRate(value: Double): this.type = {
-    alpha = value
-    this
-  }
-
-  /**
-   * @param value the number of iterations
-   */
-  def setMaxIterations(value: Int): this.type = {
-    maxIters = value
-    this
-  }
-
-  /**
-   * @param value the regularization parameter. It is used in order to avoid overfitting
-   */
-  def setRegParam(value: Double): this.type = {
-    lambda = value
-    this
-  }
-
-  /**
-   * @param value the threshold used to predict the class
-   */
-  def setThreshold(value: Double): this.type = {
-    threshold = value
-    this
-  }
+case class LogisticRegression(
+    alpha: Double = 0.01,
+    maxIters: Int = 5000,
+    lambda: Double = 0.0,
+    threshold: Double = 0.5
+) extends BaseModel with GradientDescent {
 
   /**
    * @inheritdoc
