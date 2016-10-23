@@ -9,7 +9,7 @@ import org.scalaml.algorithms.GradientDescent
   * Created by domesc on 19/04/16.
   */
 class LogisticRegression
-  extends BaseModel with GradientDescent{
+  extends BaseModel with GradientDescent {
   var alpha: Double = 0.01
   var maxIters: Int = 5000
   var lambda: Double = 0.0
@@ -63,10 +63,10 @@ class LogisticRegression
   /**
     * @inheritdoc
     */
-  override protected def cost(X: DenseMatrix[Double],
-                              y: DenseVector[Double],
-                              theta: DenseVector[Double],
-                              lambda: Double): Double = {
+  override def cost(X: DenseMatrix[Double],
+                    y: DenseVector[Double],
+                    theta: DenseVector[Double],
+                    lambda: Double): Double = {
     val m: Int = y.length
     val h_theta = sigmoid(X * theta)
     val regularizationTerm = (lambda / (2 * m)) * sum(theta(1 to -1) :^ 2d)

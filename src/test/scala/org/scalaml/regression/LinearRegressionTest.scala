@@ -6,15 +6,13 @@ import breeze.linalg._
 import breeze.numerics.abs
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * Created by domesc on 03/04/16.
  */
 @RunWith(classOf[JUnitRunner])
-class LinearRegressionTest extends FunSuite
-  with Matchers
-  with BeforeAndAfter{
+class LinearRegressionTest extends FunSuite with Matchers {
 
   test("Compute cost test") {
     val resourcesPath = System.getProperty("user.dir") + "/src/test/resources"
