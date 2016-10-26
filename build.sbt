@@ -14,9 +14,7 @@ libraryDependencies  ++= Seq(
   // It depends on LGPL code.
   "org.scalanlp" %% "breeze-viz" % "0.12",
 
-  "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
-
-  "junit" % "junit" % "4.8.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 )
 
 scalaVersion := "2.11.8"

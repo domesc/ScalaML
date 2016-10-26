@@ -5,73 +5,63 @@ import org.scalaml.BaseModel
 import org.scalaml.algorithms.GradientDescent
 
 /**
-  * Implementation of linear regression algorithm
-  *
-  * Created by domesc on 03/04/16.
-  */
+ * Implementation of linear regression algorithm
+ *
+ * Created by domesc on 03/04/16.
+ * @param learningRate the learning rate
+ * @param maxIters the number of iterations
+ * @param regParam the regularization parameter. It is used in order to avoid overfitting
+ */
 
-class LinearRegression
-  extends BaseModel with GradientDescent{
-
-  var alpha: Double = 0.01
-  var maxIters: Int = 5000
-  var lambda: Double = 0.0
-
-  /**
-    * @param value the learning rate
-    */
-  def setLearningRate(value: Double): this.type = {
-    alpha = value
-    this
-  }
+case class LinearRegression(
+    learningRate: Double = 0.01,
+    maxIters: Int = 5000,
+    regParam: Double = 0.0
+) extends BaseModel with GradientDescent {
 
   /**
-    * @param value the number of iterations
-    */
-  def setMaxIterations(value: Int): this.type = {
-    maxIters = value
-    this
-  }
-
-  /**
-    * @param value the regularization parameter. It is used in order to avoid overfitting
-    */
-  def setRegParam(value: Double): this.type = {
-    lambda = value
-    this
-  }
-
-
-  /**
-    * @inheritdoc
-    */
-  override def fit(features: DenseMatrix[Double],
-                   labels: DenseVector[Double]): Unit = {
+   * @inheritdoc
+   */
+  override def fit(
+    X: DenseMatrix[Double],
+    y: DenseVector[Double]
+  ): Unit = {
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
-    val thetaInit = DenseVector.ones[Double](features.cols)
+    val weightsInit = DenseVector.ones[Double](X.cols)
 
-    val (theta, history) = descend(features, labels, thetaInit, (a, b) => a * b, alpha, lambda, costHistoryInit, maxIters)
-    coefficients = theta
+    val (weights, history) = descend(
+      X,
+      y,
+      weightsInit,
+      (a, b) => a * b,
+      learningRate,
+      regParam,
+      costHistoryInit,
+      maxIters
+    )
+    coefficients = weights
     costHistory = history
   }
 
   /**
-    * @inheritdoc
-    */
-  override def cost(X: DenseMatrix[Double],
-                   y: DenseVector[Double],
-                   theta: DenseVector[Double],
-                   lambda: Double): Double = {
+   * @inheritdoc
+   */
+  override def cost(
+    X: DenseMatrix[Double],
+    y: DenseVector[Double],
+    weights: DenseVector[Double],
+    regParam: Double
+  ): Double = {
     val m: Int = y.length
-    val regularizationTerm = lambda * sum(theta :^ 2d)
-    sum((X * theta - y) :^ 2d) / (2 * m) + regularizationTerm
+    val regularizationTerm = regParam * sum(weights :^ 2d)
+    sum((X * weights - y) :^ 2d) / (2 * m) + regularizationTerm
   }
 
   /**
-    * Predict the new labels based on the fitted model
-    *
-    * @param X the features
-    * @return the predicted labels
-    */
-  override def predict(X: DenseMatrix[Double]): DenseVector[Double] =  X * coefficients
+   * Predict the new labels based on the fitted model
+   *
+   * @param X the features
+   * @return the predicted labels
+   */
+  override def predict(X: DenseMatrix[Double]): DenseVector[Double] = X * coefficients
 }

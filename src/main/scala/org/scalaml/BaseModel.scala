@@ -1,29 +1,31 @@
 package org.scalaml
 
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.{ DenseMatrix, DenseVector }
 
 /**
-  * Created by domesc on 19/04/16.
-  */
+ * Created by domesc on 19/04/16.
+ */
 trait BaseModel {
 
   /** The coefficients of the model */
-  var coefficients: DenseVector[Double]= _
+  var coefficients: DenseVector[Double] = _
   /** The history of the computed cost function */
   var costHistory: DenseVector[Double] = _
 
   /**
-    * Create the coefficients needed for prediction
-    * @param X the features
-    * @param y the labels
-    */
-  def fit(X: DenseMatrix[Double],
-          y: DenseVector[Double]): Unit
+   * Create the coefficients needed for prediction
+   * @param X the features
+   * @param y the labels
+   */
+  def fit(
+    X: DenseMatrix[Double],
+    y: DenseVector[Double]
+  ): Unit
 
   /**
-    * Predict the new labels based on the fitted model
-    * @param X the features
-    * @return the predicted labels
-    */
+   * Predict the new labels based on the fitted model
+   * @param X the features
+   * @return the predicted labels
+   */
   def predict(X: DenseMatrix[Double]): DenseVector[Double]
 }
