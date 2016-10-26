@@ -1,6 +1,6 @@
 package org.scalaml.algorithms
 
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.{ DenseMatrix, DenseVector }
 
 /**
  * Created by domesc on 19/04/16.
@@ -42,7 +42,7 @@ trait GradientDescent {
   }
 
   /**
-   * Cost function for linear regression model
+   * Cost function
    *
    * @param X features
    * @param y labels

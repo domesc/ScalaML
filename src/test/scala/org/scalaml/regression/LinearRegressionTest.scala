@@ -4,7 +4,7 @@ import java.io.File
 
 import breeze.linalg._
 import breeze.numerics.abs
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
 
 /**
  * Created by domesc on 03/04/16.
