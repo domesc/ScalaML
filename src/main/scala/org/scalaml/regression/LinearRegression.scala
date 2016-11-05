@@ -1,8 +1,8 @@
 package org.scalaml.regression
 
 import breeze.linalg._
-import org.scalaml.BaseModel
 import org.scalaml.algorithms.GradientDescent
+import org.scalaml.api.SupervisedBaseModel
 
 /**
  * Implementation of linear regression algorithm
@@ -17,7 +17,7 @@ case class LinearRegression(
     learningRate: Double = 0.01,
     maxIters: Int = 5000,
     regParam: Double = 0.0
-) extends BaseModel with GradientDescent {
+) extends SupervisedBaseModel with GradientDescent {
 
   /**
    * @inheritdoc
