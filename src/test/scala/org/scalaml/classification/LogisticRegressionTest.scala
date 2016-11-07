@@ -2,7 +2,7 @@ package org.scalaml.classification
 
 import java.io.File
 
-import breeze.linalg.{DenseVector, _}
+import breeze.linalg.{ DenseVector, _ }
 import org.scalatest._
 
 /**

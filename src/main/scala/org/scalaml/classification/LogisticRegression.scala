@@ -1,7 +1,7 @@
 package org.scalaml.classification
 
-import breeze.linalg.{DenseMatrix, DenseVector, sum}
-import breeze.numerics.{log, sigmoid}
+import breeze.linalg.{ DenseMatrix, DenseVector, sum }
+import breeze.numerics.{ log, sigmoid }
 import org.scalaml.algorithms.GradientDescent
 import org.scalaml.api.SupervisedBaseModel
 
