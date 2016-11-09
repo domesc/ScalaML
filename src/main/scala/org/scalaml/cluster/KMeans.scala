@@ -51,7 +51,11 @@ case class KMeans(
     val classified = KMeans.classify(points, centroids)
     val newCentroids = KMeans.update(classified, centroids)
 
-    if (!KMeans.converged(tol)(centroids, newCentroids)) runAlgo(points, newCentroids) else classified
+    if (!KMeans.converged(tol)(centroids, newCentroids)) {
+      runAlgo(points, newCentroids)
+    } else {
+      KMeans.classify(points, newCentroids)
+    }
   }
 }
 
@@ -93,10 +97,10 @@ object KMeans {
     oldCentroids: GenSeq[DenseVector[Double]],
     newCentroids: GenSeq[DenseVector[Double]]
   ): Boolean = {
-    if (oldCentroids.size != newCentroids.size) {
+    if (oldCentroids.length != newCentroids.length) {
       throw new IllegalArgumentException("The two centroids collections should have the same number of centroids")
     }
-    (0 to oldCentroids.size).forall(i => {
+    (0 until oldCentroids.length).forall(i => {
       val distance = squaredDistance(oldCentroids(i), newCentroids(i))
       distance <= tol
     })

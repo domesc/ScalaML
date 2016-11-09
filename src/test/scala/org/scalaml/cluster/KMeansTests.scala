@@ -66,4 +66,44 @@ class KMeansTests extends FlatSpec with Matchers {
     }
   }
 
+  "Converged function" should "return true because lists are the same" in {
+    val newCentroids = GenSeq(
+      DenseVector(0.0, 0.0, 1.0),
+      DenseVector(0.0, 0.0, -1.0),
+      DenseVector(0.0, 1.0, 0.0),
+      DenseVector(0.0, 10.0, 0.0)
+    )
+
+    val oldCentroids = GenSeq(
+      DenseVector(0.0, 0.0, 1.0),
+      DenseVector(0.0, 0.0, -1.0),
+      DenseVector(0.0, 1.0, 0.0),
+      DenseVector(0.0, 10.0, 0.0)
+    )
+
+    KMeans.converged(0.1)(oldCentroids, newCentroids) shouldBe true
+  }
+
+  "KMeans" should "work for matrix == ((0, 0, 1), (0, 0, -1), (0, 1, 0), (0, 10, 0)) " +
+    "and 'oldCentroids' == GenSeq((0, -1, 0), (0, 2, 0)) and 'tol' == 12.25" in {
+      val p1 = DenseVector(0.0, 0.0, 1.0)
+      val p2 = DenseVector(0.0, 0.0, -1.0)
+      val p3 = DenseVector(0.0, 1.0, 0.0)
+      val p4 = DenseVector(0.0, 10.0, 0.0)
+      val matrix = DenseMatrix(p1, p2, p3, p4)
+
+      val oldCentroids = IndexedSeq(DenseVector(0.0, -1.0, 0.0), DenseVector(0.0, 2.0, 0.0))
+      val expected: GenSeq[DenseVector[Double]] = GenSeq(DenseVector(0.0, 0.0, 0.0), DenseVector(0.0, 5.5, 0.0))
+      val tol = 12.25
+
+      val model = KMeans(2, tol, Some(oldCentroids))
+
+      val map = model.fit(matrix)
+
+      map shouldEqual Map(
+        DenseVector(0.0, 0.0, 0.0) -> DenseMatrix(p1, p2, p3),
+        DenseVector(0.0, 5.5, 0.0) -> p4.toDenseMatrix
+      )
+    }
+
 }
