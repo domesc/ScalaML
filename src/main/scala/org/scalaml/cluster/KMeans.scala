@@ -29,15 +29,15 @@ case class KMeans(
           throw new IllegalArgumentException("The number of clusters should match the number of initial centroids")
         else
           cent
-      case None => initializeCentroids(numClusters, X.cols)
+      case None => initializeCentroids(X.cols)
     }
     runAlgo(X, centroids.par)
   }
 
-  private def initializeCentroids(numCentroids: Int, size: Int): GenSeq[DenseVector[Double]] = {
+  private def initializeCentroids(size: Int): GenSeq[DenseVector[Double]] = {
     val normal = breeze.stats.distributions.Gaussian(0, 1)
     val centroids = GenSeq.empty[DenseVector[Double]]
-    for (i <- 0 until numCentroids) {
+    for (i <- 0 until numClusters) {
       centroids :+ DenseVector.rand(size, normal)
     }
     centroids
@@ -85,9 +85,9 @@ object KMeans {
    */
   private def update(
     classified: GenMap[DenseVector[Double], DenseMatrix[Double]],
-    oldMeans: GenSeq[DenseVector[Double]]
+    oldCentroids: GenSeq[DenseVector[Double]]
   ): GenSeq[DenseVector[Double]] = {
-    oldMeans.map(oldMean => findAverage(oldMean, classified.get(oldMean)))
+    oldCentroids.map(oldCentroid => findAverage(oldCentroid, classified.get(oldCentroid)))
   }
 
   /**

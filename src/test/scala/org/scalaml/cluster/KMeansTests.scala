@@ -1,7 +1,7 @@
 package org.scalaml.cluster
 
 import breeze.linalg.{ DenseMatrix, DenseVector }
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
 
 import scala.collection.GenSeq
 
