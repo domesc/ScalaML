@@ -1,9 +1,9 @@
 package org.scalaml.classification
 
-import breeze.linalg.{DenseMatrix, DenseVector, sum}
-import breeze.numerics.{log, sigmoid}
-import org.scalaml.BaseModel
+import breeze.linalg.{ DenseMatrix, DenseVector, sum }
+import breeze.numerics.{ log, sigmoid }
 import org.scalaml.algorithms.GradientDescent
+import org.scalaml.api.SupervisedBaseModel
 
 /**
  * Created by domesc on 19/04/16.
@@ -17,7 +17,7 @@ case class LogisticRegression(
     maxIters: Int = 5000,
     regParam: Double = 0.0,
     threshold: Double = 0.5
-) extends BaseModel with GradientDescent {
+) extends SupervisedBaseModel with GradientDescent {
 
   /**
    * @inheritdoc

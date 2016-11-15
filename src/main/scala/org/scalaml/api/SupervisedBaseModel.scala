@@ -1,11 +1,11 @@
-package org.scalaml
+package org.scalaml.api
 
 import breeze.linalg.{ DenseMatrix, DenseVector }
 
 /**
  * Created by domesc on 19/04/16.
  */
-trait BaseModel {
+trait SupervisedBaseModel {
 
   /** The coefficients of the model */
   var coefficients: DenseVector[Double] = _

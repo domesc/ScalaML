@@ -2,7 +2,7 @@ package org.scalaml.classification
 
 import java.io.File
 
-import breeze.linalg.{DenseVector, _}
+import breeze.linalg.{ DenseVector, _ }
 import org.scalatest._
 
 /**
@@ -16,7 +16,7 @@ class LogisticRegressionTest extends FlatSpec
   var features: DenseMatrix[Double] = _
   var labels: DenseVector[Double] = _
 
-  override def beforeAll() = {
+  override def beforeAll(): Unit = {
     model = LogisticRegression()
     features = DenseMatrix((3.0, 1.0), (-1.0, -2.0), (6.3, 5.2), (3.0, 1.0), (4.3, 5.1), (6.3, 5.2))
     labels = DenseVector(0.0, 1.0, 1.0, 0.0, 1.0, 1.0)
