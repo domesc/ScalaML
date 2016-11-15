@@ -1,7 +1,8 @@
 package org.scalaml.cluster
 
-import breeze.linalg.{ DenseMatrix, DenseVector }
-import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
+import breeze.linalg.{DenseMatrix, DenseVector}
+import org.scalaml.metrics.Distance
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.GenSeq
 
@@ -11,13 +12,15 @@ import scala.collection.GenSeq
 class KMeansTests extends FlatSpec with Matchers {
 
   "Classify" should "work for empty centroids and empty train data" in {
-    val result = KMeans.classify(DenseMatrix.zeros(0, 0), IndexedSeq())
+    val model = KMeans(1, 0, Some(IndexedSeq()))
+    val result = model.fit(DenseMatrix.zeros(0, 0))
 
     result shouldEqual Map.empty[DenseVector[Double], DenseMatrix[Double]]
   }
 
   "Classify" should "work for an empty train data and centroids == GenSeq(DenseVector(1,1,1))" in {
-    val result = KMeans.classify(DenseMatrix.zeros(0, 0), IndexedSeq(DenseVector(1, 1, 1)))
+    val model = KMeans(1, 1, Some(IndexedSeq(DenseVector(1, 1, 1))))
+    val result = model.fit(DenseMatrix.zeros(0, 0))
 
     result shouldEqual Map.empty[DenseVector[Double], DenseMatrix[Double]]
   }
@@ -30,14 +33,14 @@ class KMeansTests extends FlatSpec with Matchers {
       val p4 = DenseVector(-1.0, -1.0, 0.0)
       val train = DenseMatrix(p1, p2, p3, p4)
       val initialCentroids = IndexedSeq(DenseVector(0.0, 0.0, 0.0))
-      val result = KMeans.classify(train, initialCentroids)
+      val model = KMeans(1, 1, Some(initialCentroids))
+      val result = model.fit(train)
 
       result shouldEqual Map(initialCentroids(0) -> train)
     }
 
   "Classify" should "work for train data == (1, 1, 0), (1, -1, 0), (-1, 1, 0), (-1, -1, 0) and " +
     "centroids == GenSeq((1, 0, 0), (-1, 0, 0))" in {
-      val model = KMeans(2, 0.1, None)
       val p1 = DenseVector(1.0, 1.0, 0.0)
       val p2 = DenseVector(1.0, -1.0, 0.0)
       val p3 = DenseVector(-1.0, 1.0, 0.0)
@@ -46,8 +49,9 @@ class KMeansTests extends FlatSpec with Matchers {
       val centroid1 = DenseVector(1.0, 0.0, 0.0)
       val centroid2 = DenseVector(-1.0, 0.0, 0.0)
       val centroids = IndexedSeq(centroid1, centroid2)
+      val model = KMeans(1, 2, Some(centroids), 0.1)
 
-      val result = KMeans.classify(train, centroids)
+      val result = model.fit(train)
       result shouldEqual Map(centroid1 -> DenseMatrix(p1, p2), centroid2 -> DenseMatrix(p3, p4))
     }
 
@@ -62,7 +66,7 @@ class KMeansTests extends FlatSpec with Matchers {
     val tol = 12.25
 
     intercept[IllegalArgumentException] {
-      KMeans.converged(tol)(oldCentroids, newCentroids)
+      KMeans.converged(tol)(oldCentroids, newCentroids, Distance.euclidean)
     }
   }
 
@@ -81,7 +85,7 @@ class KMeansTests extends FlatSpec with Matchers {
       DenseVector(0.0, 10.0, 0.0)
     )
 
-    KMeans.converged(0.1)(oldCentroids, newCentroids) shouldBe true
+    KMeans.converged(0.1)(oldCentroids, newCentroids, Distance.euclidean) shouldBe true
   }
 
   "KMeans" should "work for matrix == ((0, 0, 1), (0, 0, -1), (0, 1, 0), (0, 10, 0)) " +
@@ -93,16 +97,15 @@ class KMeansTests extends FlatSpec with Matchers {
       val matrix = DenseMatrix(p1, p2, p3, p4)
 
       val oldCentroids = IndexedSeq(DenseVector(0.0, -1.0, 0.0), DenseVector(0.0, 2.0, 0.0))
-      val expected: GenSeq[DenseVector[Double]] = GenSeq(DenseVector(0.0, 0.0, 0.0), DenseVector(0.0, 5.5, 0.0))
       val tol = 12.25
 
-      val model = KMeans(2, tol, Some(oldCentroids))
+      val model = KMeans(10000, 2, Some(oldCentroids), tol)
 
       val map = model.fit(matrix)
 
       map shouldEqual Map(
-        DenseVector(0.0, 0.0, 0.0) -> DenseMatrix(p1, p2, p3),
-        DenseVector(0.0, 5.5, 0.0) -> p4.toDenseMatrix
+        DenseVector(0.0, 1.0, 0.0) -> DenseMatrix(p1, p2, p3),
+        DenseVector(0.0, 3.3333333333333335, 0.0) -> p4.toDenseMatrix
       )
     }
 

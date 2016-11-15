@@ -3,20 +3,28 @@ package org.scalaml.cluster
 import breeze.linalg.{ *, DenseMatrix, DenseVector, squaredDistance }
 import breeze.stats.mean
 import org.scalaml.api.UnsupervisedBaseModel
+import org.scalaml.metrics.Distance
 
 import scala.annotation.tailrec
 import scala.collection.{ GenMap, GenSeq }
 
 /**
+ * An implementation of the K-means clustering algorithm
+ *
+ * @param numIterations the maximum number of iterations allowed by the algorithm
  * @param numClusters the number of clusters we want to find
+ * @param initialCentroids optional centroids, if None they are calculated randomly based on a Gaussian distribution
  * @param tol relative tolerance to declare convergence
+ * @param distanceFun the metric used to find the closest centroids
  *
  * Created by domesc on 29/10/16.
  */
 case class KMeans(
+    numIterations: Int,
     numClusters: Int,
-    tol: Double,
-    initialCentroids: Option[GenSeq[DenseVector[Double]]]
+    initialCentroids: Option[GenSeq[DenseVector[Double]]],
+    tol: Double = 0.1,
+    distanceFun: (breeze.linalg.Vector[Double], breeze.linalg.Vector[Double]) => Double = Distance.euclidean
 ) extends UnsupervisedBaseModel {
 
   /**
@@ -31,7 +39,7 @@ case class KMeans(
           cent
       case None => initializeCentroids(X.cols)
     }
-    runAlgo(X, centroids.par)
+    runAlgo(X, centroids.par, numIterations)
   }
 
   private def initializeCentroids(size: Int): GenSeq[DenseVector[Double]] = {
@@ -46,22 +54,20 @@ case class KMeans(
   @tailrec
   private final def runAlgo(
     points: DenseMatrix[Double],
-    centroids: GenSeq[DenseVector[Double]]
+    centroids: GenSeq[DenseVector[Double]],
+    iterations: Int
   ): GenMap[DenseVector[Double], DenseMatrix[Double]] = {
-    val classified = KMeans.classify(points, centroids)
-    val newCentroids = KMeans.update(classified, centroids)
+    val classified = classify(points, centroids)
+    val newCentroids = update(classified, centroids)
 
-    if (!KMeans.converged(tol)(centroids, newCentroids)) {
-      runAlgo(points, newCentroids)
+    if (KMeans.converged(tol)(centroids, newCentroids, distanceFun) || iterations == 0) {
+      classify(points, newCentroids)
     } else {
-      KMeans.classify(points, newCentroids)
+      runAlgo(points, newCentroids, iterations - 1)
     }
   }
-}
 
-object KMeans {
-
-  def classify(
+  private def classify(
     points: DenseMatrix[Double],
     centroids: GenSeq[DenseVector[Double]]
   ): GenMap[DenseVector[Double], DenseMatrix[Double]] = {
@@ -90,25 +96,9 @@ object KMeans {
     oldCentroids.map(oldCentroid => findAverage(oldCentroid, classified.get(oldCentroid)))
   }
 
-  /**
-   * Check if the K-Means algorithm converged
-   */
-  def converged(tol: Double)(
-    oldCentroids: GenSeq[DenseVector[Double]],
-    newCentroids: GenSeq[DenseVector[Double]]
-  ): Boolean = {
-    if (oldCentroids.length != newCentroids.length) {
-      throw new IllegalArgumentException("The two centroids collections should have the same number of centroids")
-    }
-    (0 until oldCentroids.length).forall(i => {
-      val distance = squaredDistance(oldCentroids(i), newCentroids(i))
-      distance <= tol
-    })
-  }
-
   private def findClosestCentroids(point: DenseVector[Double], centroids: GenSeq[DenseVector[Double]]): DenseVector[Double] = {
     assert(centroids.size > 0)
-    var minDistance = squaredDistance(point, centroids(0))
+    var minDistance = distanceFun.apply(point, centroids(0))
     var closest = centroids(0)
     var i = 1
     while (i < centroids.size) {
@@ -127,5 +117,25 @@ object KMeans {
       case Some(p) => if (p.rows == 0) oldCentroid else mean(p(::, *)).t
       case None => oldCentroid
     }
+  }
+}
+
+object KMeans {
+  /**
+   * Check if the K-Means algorithm converged
+   */
+  def converged(tol: Double)(
+    oldCentroids: GenSeq[DenseVector[Double]],
+    newCentroids: GenSeq[DenseVector[Double]],
+    distanceFun: (breeze.linalg.Vector[Double], breeze.linalg.Vector[Double]) => Double
+
+  ): Boolean = {
+    if (oldCentroids.length != newCentroids.length) {
+      throw new IllegalArgumentException("The two centroids collections should have the same number of centroids")
+    }
+    (0 until oldCentroids.length).forall(i => {
+      val distance = distanceFun.apply(oldCentroids(i), newCentroids(i))
+      distance <= tol
+    })
   }
 }
