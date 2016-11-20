@@ -14,18 +14,18 @@ trait SupervisedBaseModel {
 
   /**
    * Create the coefficients needed for prediction
-   * @param X the features
-   * @param y the labels
+   * @param trainFeatures the features
+   * @param labels the labels
    */
   def fit(
-    X: DenseMatrix[Double],
-    y: DenseVector[Double]
+    trainFeatures: DenseMatrix[Double],
+    labels  : DenseVector[Double]
   ): Unit
 
   /**
    * Predict the new labels based on the fitted model
-   * @param X the features
+   * @param testFeatures the features
    * @return the predicted labels
    */
-  def predict(X: DenseMatrix[Double]): DenseVector[Double]
+  def predict(testFeatures: DenseMatrix[Double]): DenseVector[Double]
 }

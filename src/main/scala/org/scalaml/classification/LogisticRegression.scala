@@ -23,14 +23,14 @@ case class LogisticRegression(
    * @inheritdoc
    */
   override def fit(
-    X: DenseMatrix[Double],
-    y: DenseVector[Double]
+    trainFeatures: DenseMatrix[Double],
+    labels  : DenseVector[Double]
   ): Unit = {
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
-    val weightsInit = DenseVector.ones[Double](X.cols)
+    val weightsInit = DenseVector.ones[Double](trainFeatures.cols)
 
     val (weights, history) = descend(
-      X, y, weightsInit, (a, b) => sigmoid(a * b), learningRate, regParam, costHistoryInit, maxIters
+      trainFeatures, labels, weightsInit, (a, b) => sigmoid(a * b), learningRate, regParam, costHistoryInit, maxIters
     )
     coefficients = weights
     costHistory = history
@@ -40,15 +40,15 @@ case class LogisticRegression(
    * @inheritdoc
    */
   override def cost(
-    X: DenseMatrix[Double],
-    y: DenseVector[Double],
+    trainFeatures: DenseMatrix[Double],
+    labels: DenseVector[Double],
     weights: DenseVector[Double],
     regParam: Double
   ): Double = {
-    val m: Int = y.length
-    val h_theta = sigmoid(X * weights)
+    val m: Int = labels.length
+    val h_theta = sigmoid(trainFeatures * weights)
     val regularizationTerm = (regParam / (2 * m)) * sum(weights(1 to -1) :^ 2d)
-    val cost = (1.0 / m) * (-(y.t) * log(h_theta) - y.mapValues(1 - _).t * log(h_theta.mapValues(1 - _)))
+    val cost = (1.0 / m) * (-(labels.t) * log(h_theta) - labels.mapValues(1 - _).t * log(h_theta.mapValues(1 - _)))
 
     cost + regularizationTerm
   }
@@ -57,11 +57,11 @@ case class LogisticRegression(
    * Predict the new labels based on the fitted model
    * Binary classification supported.
    *
-   * @param X the features
+   * @param testFeatures the features
    * @return the predicted labels
    */
-  override def predict(X: DenseMatrix[Double]): DenseVector[Double] = {
-    val probabilities: DenseVector[Double] = sigmoid(X * coefficients)
+  override def predict(testFeatures: DenseMatrix[Double]): DenseVector[Double] = {
+    val probabilities: DenseVector[Double] = sigmoid(testFeatures * coefficients)
     val classes = probabilities.map {
       case x if (x < threshold) => 0.0
       case x if (x >= threshold) => 1.0

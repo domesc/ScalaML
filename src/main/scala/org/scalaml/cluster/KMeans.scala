@@ -30,16 +30,16 @@ case class KMeans(
   /**
    * @inheritdoc
    */
-  override def fit(X: DenseMatrix[Double]): GenMap[DenseVector[Double], DenseMatrix[Double]] = {
+  override def fit(trainFeatures: DenseMatrix[Double]): GenMap[DenseVector[Double], DenseMatrix[Double]] = {
     val centroids = initialCentroids match {
       case Some(cent) =>
         if (cent.length != numClusters)
           throw new IllegalArgumentException("The number of clusters should match the number of initial centroids")
         else
           cent
-      case None => initializeCentroids(X.cols)
+      case None => initializeCentroids(trainFeatures.cols)
     }
-    runAlgo(X, centroids.par, numIterations)
+    runAlgo(trainFeatures, centroids.par, numIterations)
   }
 
   private def initializeCentroids(size: Int): GenSeq[DenseVector[Double]] = {
