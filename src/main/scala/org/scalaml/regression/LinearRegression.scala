@@ -24,7 +24,7 @@ case class LinearRegression(
    */
   override def fit(
     trainSet: DenseMatrix[Double],
-    labels  : DenseVector[Double]
+    labels: DenseVector[Double]
   ): Unit = {
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
     val weightsInit = DenseVector.ones[Double](trainSet.cols)
@@ -48,8 +48,8 @@ case class LinearRegression(
    */
   override def cost(
     trainSet: DenseMatrix[Double],
-    labels  : DenseVector[Double],
-    weights : DenseVector[Double],
+    labels: DenseVector[Double],
+    weights: DenseVector[Double],
     regParam: Double
   ): Double = {
     val m: Int = labels.length

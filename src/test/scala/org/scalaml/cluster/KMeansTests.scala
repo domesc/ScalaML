@@ -1,8 +1,8 @@
 package org.scalaml.cluster
 
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.{ DenseMatrix, DenseVector }
 import org.scalaml.metrics.Distance
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 
 import scala.collection.GenSeq
 

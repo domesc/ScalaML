@@ -22,13 +22,13 @@ trait GradientDescent {
   @annotation.tailrec
   protected final def descend(
     trainFeatures: DenseMatrix[Double],
-    labels       : DenseVector[Double],
-    weights      : DenseVector[Double],
-    h_theta      : (DenseMatrix[Double], DenseVector[Double]) => DenseVector[Double],
-    learningRate : Double,
-    regParam     : Double,
-    history      : DenseVector[Double],
-    remaining    : Int
+    labels: DenseVector[Double],
+    weights: DenseVector[Double],
+    h_theta: (DenseMatrix[Double], DenseVector[Double]) => DenseVector[Double],
+    learningRate: Double,
+    regParam: Double,
+    history: DenseVector[Double],
+    remaining: Int
   ): (DenseVector[Double], DenseVector[Double]) = remaining match {
 
     case 0 => (weights, history)

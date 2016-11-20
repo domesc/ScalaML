@@ -19,7 +19,7 @@ trait SupervisedBaseModel {
    */
   def fit(
     trainFeatures: DenseMatrix[Double],
-    labels  : DenseVector[Double]
+    labels: DenseVector[Double]
   ): Unit
 
   /**

@@ -24,7 +24,7 @@ case class LogisticRegression(
    */
   override def fit(
     trainFeatures: DenseMatrix[Double],
-    labels  : DenseVector[Double]
+    labels: DenseVector[Double]
   ): Unit = {
     val costHistoryInit: DenseVector[Double] = DenseVector.zeros(maxIters)
     val weightsInit = DenseVector.ones[Double](trainFeatures.cols)
