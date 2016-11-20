@@ -10,9 +10,9 @@ import scala.collection.{ GenMap, GenSeq }
 trait UnsupervisedBaseModel {
 
   /**
-   * Create the coefficients needed for prediction
-   * @param X the features
+   * Create the [[GenMap]] with as key the centroid and as value the set of samples belonging to the centroid
+   * @param trainFeatures the features
    */
-  def fit(X: DenseMatrix[Double]): GenMap[DenseVector[Double], DenseMatrix[Double]]
+  def fit(trainFeatures: DenseMatrix[Double]): GenMap[DenseVector[Double], DenseMatrix[Double]]
 
 }

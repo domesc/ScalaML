@@ -1,7 +1,7 @@
 package org.scalaml.classification
 
-import breeze.linalg.{DenseMatrix, DenseVector}
-import org.scalatest.{FlatSpec, Matchers}
+import breeze.linalg.{ DenseMatrix, DenseVector }
+import org.scalatest.{ FlatSpec, Matchers }
 
 /**
  * Created by domesc on 20/11/16.
