@@ -44,11 +44,9 @@ case class KMeans(
 
   private def initializeCentroids(size: Int): GenSeq[DenseVector[Double]] = {
     val normal = breeze.stats.distributions.Gaussian(0, 1)
-    val centroids = GenSeq.empty[DenseVector[Double]]
-    for (i <- 0 until numClusters) {
-      centroids :+ DenseVector.rand(size, normal)
+    (0 until numClusters).foldLeft(GenSeq.empty[DenseVector[Double]]) {
+      case (acc, _) => acc :+ DenseVector.rand(size, normal)
     }
-    centroids
   }
 
   @tailrec
@@ -100,14 +98,13 @@ case class KMeans(
     assert(centroids.size > 0)
     var minDistance = distanceFun.apply(point, centroids(0))
     var closest = centroids(0)
-    var i = 1
-    while (i < centroids.size) {
+
+    for (i <- 1 until centroids.size) {
       val distance = squaredDistance(point, centroids(i))
       if (distance < minDistance) {
         minDistance = distance
         closest = centroids(i)
       }
-      i += 1
     }
     closest
   }
