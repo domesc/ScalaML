@@ -11,6 +11,12 @@ import scala.collection.GenSeq
  */
 class KMeansTests extends FlatSpec with Matchers {
 
+  val p1 = DenseVector(0.0, 0.0, 1.0)
+  val p2 = DenseVector(0.0, 0.0, -1.0)
+  val p3 = DenseVector(0.0, 1.0, 0.0)
+  val p4 = DenseVector(0.0, 10.0, 0.0)
+  val matrixFixture = IndexedSeq(p1, p2, p3, p4)
+
   "Classify" should "work for empty centroids and empty train data" in {
     val model = KMeans(IndexedSeq(), 1, 0, Some(IndexedSeq()))
     val result = model.predict()
@@ -90,16 +96,10 @@ class KMeansTests extends FlatSpec with Matchers {
 
   "KMeans" should "work for matrix == ((0, 0, 1), (0, 0, -1), (0, 1, 0), (0, 10, 0)) " +
     "and 'oldCentroids' == GenSeq((0, -1, 0), (0, 2, 0)) and 'tol' == 12.25" in {
-      val p1 = DenseVector(0.0, 0.0, 1.0)
-      val p2 = DenseVector(0.0, 0.0, -1.0)
-      val p3 = DenseVector(0.0, 1.0, 0.0)
-      val p4 = DenseVector(0.0, 10.0, 0.0)
-      val matrix = IndexedSeq(p1, p2, p3, p4)
-
       val oldCentroids = IndexedSeq(DenseVector(0.0, -1.0, 0.0), DenseVector(0.0, 2.0, 0.0))
       val tol = 12.25
 
-      val model = KMeans(matrix, 10000, 2, Some(oldCentroids), tol)
+      val model = KMeans(matrixFixture, 10000, 2, Some(oldCentroids), tol)
 
       val map = model.predict()
 
@@ -108,5 +108,32 @@ class KMeansTests extends FlatSpec with Matchers {
         DenseVector(0.0, 5.5, 0.0) -> IndexedSeq(p4)
       )
     }
+
+  "KMeans" should "work with a smaller 'tol' == 1.25" in {
+    val oldCentroids = IndexedSeq(DenseVector(0.0, -1.0, 0.0), DenseVector(0.0, 2.0, 0.0))
+    val tol = 1.25
+
+    val model = KMeans(matrixFixture, 10000, 2, Some(oldCentroids), tol)
+
+    val map = model.predict()
+
+    map shouldEqual Map(
+      DenseVector(0.0, 0.3333333333333333, 0.0) -> IndexedSeq(p1, p2, p3),
+      DenseVector(0.0, 10.0, 0.0) -> IndexedSeq(p4)
+    )
+  }
+
+  "KMeans" should "work with random initialized centroids" in {
+    val tol = 1.25
+
+    val model = KMeans(matrixFixture, 10000, 2, None, tol)
+
+    val map = model.predict()
+
+    map shouldEqual Map(
+      DenseVector(0.0, 0.3333333333333333, 0.0) -> IndexedSeq(p1, p2, p3),
+      DenseVector(0.0, 10.0, 0.0) -> IndexedSeq(p4)
+    )
+  }
 
 }

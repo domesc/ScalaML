@@ -1,6 +1,7 @@
 package org.scalaml.cluster
 
 import breeze.linalg.DenseVector
+import org.scalaml.Point
 import org.scalaml.api.UnsupervisedBaseModel
 import org.scalaml.metrics.Distance
 
@@ -38,7 +39,9 @@ case class KMeans(
           throw new IllegalArgumentException("The number of clusters should match the number of initial centroids")
         else
           cent
-      case None => initializeCentroids(trainFeatures.length)
+      case None =>
+        val size = trainFeatures.headOption.getOrElse(DenseVector.zeros[Double](0)).size
+        initializeCentroids(size)
     }
     runAlgo(trainFeatures.par, centroids.par, numIterations)
   }
@@ -107,7 +110,6 @@ case class KMeans(
         if (points.length == 0)
           oldCentroid
         else {
-          //points.sum :/ points.length
           (1.0 / points.length) * points.foldLeft(DenseVector.zeros[Double](oldCentroid.length))((acc, p) => acc + p)
         }
       case None => oldCentroid
